@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+model ImportBatch {
+  id String @id @default(cuid())
+  filename String
+  createdAt DateTime @default(now())
+  source Bytes
+  metadata String
+  rowCount Int
+  records SkuRecord[]
+}
+model SkuRecord {
+  id String @id @default(cuid())
+  batchId String
+  batch ImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  sku String
+  normalized String
+  @@unique([batchId, sku])
+}
